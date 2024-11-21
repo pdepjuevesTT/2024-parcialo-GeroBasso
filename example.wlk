@@ -193,3 +193,8 @@ class PagadorCompulsivo inherits Persona{
 
 
 
+
+
+
+
+
