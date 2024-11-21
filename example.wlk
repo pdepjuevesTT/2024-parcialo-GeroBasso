@@ -14,6 +14,7 @@ class Persona {
   method cobrarSueldo(){
     sueldoActual = sueldo
     self.pagarCuotas()
+    plata += sueldoActual
   }
 
   method aumentoSueldo(monto){
@@ -49,22 +50,24 @@ class Persona {
 
   method calcularCuotasVencidas() = cuotas.map({cuota=> cuota.calcularCuotasVencidas()}).sum()
   
-
+  method cuantasCosasTiene() = cosas.size()
 
 }
 
-object mes {
-  var actual = 1
+object personasTotales {
+  var mesActual = 1
   var property personas = []
-  method terminar() {
+  method terminarMes() {
     personas.forEach({persona => persona.cobrarSueldo()})
     self.pasarMes()
   }
 
   method pasarMes(){
-    if (actual == 12) actual = 1
-    else actual += 1
+    if (mesActual == 12) mesActual = 1
+    else mesActual += 1
   }
+
+  method personaQueMasTiene() = personas.max({persona=>persona.cuantasCosasTiene()})
 
 }
 
@@ -104,6 +107,11 @@ class TarjetaCredito {
 
   method calcularValorCuota(monto) = (monto * (tasaInteres/100)) / cuotas
 
+}
+
+//invento con Herencia
+class TarjetaCreditoX inherits TarjetaCredito {
+  override method calcularValorCuota(monto) = if (titular.calcularCuotasVencidas()>0) super(monto) else super(monto)/2
 }
 
 class Cuotas {
@@ -173,13 +181,15 @@ class CompradorCompulsivo inherits Persona{
 class PagadorCompulsivo inherits Persona{
 
   override method cobrarSueldo(){
-    plata += sueldo
-    self.pagarCuotas()
-  }
-
-  override method pagarCuotas(){
-    cuotas.forEach([{cuota => cuota.pagar(plata)}])
-
+    super()
+    if(self.calcularCuotasVencidas()>0){
+      sueldoActual += plata
+      super()
+    }
   }
   
 }
+
+
+
+
